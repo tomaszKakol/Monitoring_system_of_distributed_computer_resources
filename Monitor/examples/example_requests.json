@@ -1,0 +1,56 @@
+http://localhost:8080/v1/hosts
+
+POST body:
+
+{  
+   "host-id":"testHostName",
+   "os":"Windows",
+   "metrics": [
+                 {
+                      "type":"CPU",
+                      "unit":"%",
+                      "metric-id":"CPU_testHost"
+                 },
+                 {
+                      "type":"RAM",
+                      "unit":"%",
+                      "metric-id":"RAM_testHost"
+                 }  
+              ]
+}
+
+
+
+
+
+
+http://localhost:8080/v1/metrics/CPU_testHost/measurements
+
+POST body:
+
+[
+   {
+      "val":"10",
+      "ts":"13/04/2019 12:12:12"
+   },
+    {
+      "val":"7",
+      "ts":"13/04/2019 12:13:08"
+   },
+    {
+      "val":"43",
+      "ts":"13/04/2019 12:14:22"
+   }
+]
+
+
+http://localhost:8080/v1/metrics
+
+POST body ( create compound metric):
+
+{  
+   "kind":"moving-avg",
+   "metric-ids":"CPU_testHost",
+   "monitor-id": "v1",
+   "type":"CPU"
+}

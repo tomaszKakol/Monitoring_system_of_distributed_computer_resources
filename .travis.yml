@@ -1,0 +1,96 @@
+stages:
+- test
+- build
+
+services:
+  - docker
+
+matrix:
+  include:
+    - stage: test
+      dist: xenial
+      language: node_js
+      node_js:
+        - "8"
+      before_install:
+        - cd client
+      install:
+        - npm install
+      script:
+        - npm run test
+
+    - stage: test
+      language: python
+      python: 3.7
+      dist: xenial
+      install:
+        - python -m pip install --upgrade pip
+        - pip install -r APIGateway/requirements.txt
+      script:
+        - python APIGateway/manage.py test gateway
+
+    - stage: test
+      language: java
+      before_install:
+        - cd Monitor
+      install:
+        - mvn clean
+        - mvn install
+      script:
+        - mvn test
+
+    - stage: test
+      language: python
+      python: 3.7
+      dist: xenial
+      install:
+        - python -m pip install --upgrade pip
+        - pip install -r Sensor/requirements.txt
+      script:
+        - python Sensor/test/tests.py
+
+    - stage: test
+      language: python
+      python: 3.7
+      dist: xenial
+      install:
+        - python -m pip install --upgrade pip
+        - pip install -r AuthService/requirements.txt
+      script:
+        - python AuthService/tests.py
+
+    - stage: build
+      dist: xenial
+      language: python
+      install:
+        - python -m pip install --upgrade pip
+        - pip install -r tests/requirements.txt
+      script:
+        - docker build --tag=$DOCKER_USER/all:auth-km3 AuthService/
+        - docker build --tag=$DOCKER_USER/all:gateway-km3 APIGateway/
+        - docker build --tag=$DOCKER_USER/all:monitor-km3 Monitor/
+        - docker build --tag=$DOCKER_USER/all:sensor-km3 Sensor/
+        - docker build --tag=$DOCKER_USER/all:client-km3 client/
+        - docker build --tag=$DOCKER_USER/all:autoclient-km3 AutomaticClient/
+        - docker run -d --network host -it $DOCKER_USER/all:auth-km3
+        - docker run -d --network host -it $DOCKER_USER/all:gateway-km3
+        - docker run -d --network host -it $DOCKER_USER/all:monitor-km3
+        - docker run -d --network host -it $DOCKER_USER/all:sensor-km3
+        - docker images
+      after_success:
+        - python tests/tests.py
+      deploy:
+        - script:
+            - docker login -u $DOCKER_USER -p $DOCKER_PASS
+            - docker push $DOCKER_USER/all:auth-km3
+            - docker push $DOCKER_USER/all:monitor-km3
+            - docker push $DOCKER_USER/all:gateway-km3
+            - docker push $DOCKER_USER/all:sensor-km3
+            - docker push $DOCKER_USER/all:client-km3
+            - docker push $DOCKER_USER/all:autoclient-km3
+          on:
+            branch: km3
+
+
+notifications:
+  email: false
