@@ -1,0 +1,13 @@
+@import 'variables';
+
+.vl-flex {
+  z-index: 100000; 
+}
+
+.vl-flex-wrap {
+  flex-wrap: wrap;
+}
+
+.vl-flex-column {
+  flex-direction: column;
+}
