@@ -1,6 +1,0 @@
-flask==1.0.2
-flask_jwt_extended==3.18.2
-passlib==1.7.1
-flask-restful==0.3.7
-flask-sqlalchemy==2.4.0
-flask_cors
