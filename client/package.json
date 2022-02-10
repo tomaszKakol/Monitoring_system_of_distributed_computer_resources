@@ -41,7 +41,7 @@
     "eslint-plugin-vue": "^5.0.0",
     "jest-cli": "^24.8.0",
     "jest-dom": "^3.3.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "sass-loader": "^7.1.0",
     "sinon": "^7.3.2",
     "stylus": "^0.54.5",
